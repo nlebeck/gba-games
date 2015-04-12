@@ -10,13 +10,15 @@
 
 #define REG_VCOUNT *(vu16*)0x04000006
 
+/*
+ * A test program that draws a horizontal line scrolling down the screen in a
+ * loop using a bitmap mode (mode 3). Uses a simple but inefficient form of
+ * vsync.
+ */
+
 void vid_vsync();
 
-//---------------------------------------------------------------------------------
-// Program entry point
-//---------------------------------------------------------------------------------
 int main(void) {
-//---------------------------------------------------------------------------------
 
     REG_DISPCNT = DCNT_MODE3 | DCNT_BG2;
 
