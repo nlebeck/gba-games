@@ -18,10 +18,14 @@ int main(void) {
 
     REG_DISPCNT = DCNT_MODE4 | DCNT_BG2;
 
+    memcpy(vid_mem, mountainBitmap, mountainBitmapLen);
+    memcpy(pal_bg_mem, mountainPal, mountainPalLen);
+
 	while (1) {
         vid_vsync();
 
-        memcpy(vid_mem, mountainBitmap, mountainBitmapLen);
-        memcpy(pal_bg_mem, mountainPal, mountainPalLen);
+        //pal_bg_mem[0] = 0x0BBC;
+        //pal_bg_mem[1] = 0x7BC2;
+        //pal_bg_mem[2] = 0x59EA;
 	}
 }
