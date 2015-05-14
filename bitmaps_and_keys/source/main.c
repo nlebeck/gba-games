@@ -8,10 +8,13 @@
 #include <stdlib.h>
 
 #include "toolbox.h"
+#include "input.h"
 #include "mountain.h"
 
 /**
- * Program will display a picture on screen. Some colors will change when the A button is pressed.
+ * Program displays a bitmap on the screen. The colors are inverted when the A button is pressed.
+ * Note that this program requires the files "toolbox.h", "input.h", and "toolbox.c" from the TONC
+ * demo "key_demo" in the "basic" section.
  */
 
 int main(void) {
@@ -23,9 +26,12 @@ int main(void) {
 
 	while (1) {
         vid_vsync();
+        key_poll();
 
-        //pal_bg_mem[0] = 0x0BBC;
-        //pal_bg_mem[1] = 0x7BC2;
-        //pal_bg_mem[2] = 0x59EA;
+        if (key_hit(KEY_A)) {
+            pal_bg_mem[0] = ~pal_bg_mem[0] & 0x7FFF;
+            pal_bg_mem[1] = ~pal_bg_mem[1] & 0x7FFF;
+            pal_bg_mem[2] = ~pal_bg_mem[2] & 0x7FFF;
+        }
 	}
 }
