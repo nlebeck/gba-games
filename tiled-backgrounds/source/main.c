@@ -2,17 +2,39 @@
 #include <brin.h>
 
 /*
- * Code for experimenting with regular tiled backgrounds. Uses Brinstar tileset
- * from TONC brin_demo.
+ * Code that experiments with regular tiled backgrounds. Uses the Brinstar tileset
+ * from the TONC demo brin_demo.
  *
  * Niel Lebeck
  */
 
-void setTilemap(int sbb) {
-    se_mem[sbb][0] = 0x0000;
-    se_mem[sbb][1] = 0x0001;
-    se_mem[sbb][2] = 0x0002;
-    se_mem[sbb][3] = 0x0003;
+void setTilemap() {
+
+    int sbb = 30;
+
+    // the pipe tiles are 25 and 26 (top) and 17 and 18 (bottom)
+    se_mem[sbb][0] = 0x3019;
+    se_mem[sbb][1] = 0x301A;
+    se_mem[sbb][1 * 32 + 0] = 0x3011;
+    se_mem[sbb][1 * 32 + 1] = 0x3012;
+
+    // using palette 4 instead of 3 changes the color of the pipe
+    se_mem[sbb][10] = 0x4019;
+    se_mem[sbb][11] = 0x401A;
+    se_mem[sbb][1 * 32 + 10] = 0x4011;
+    se_mem[sbb][1 * 32 + 11] = 0x4012;
+
+    // put a pipe in the other screenblock
+    se_mem[sbb + 1][0] = 0x5019;
+    se_mem[sbb + 1][1] = 0x501A;
+    se_mem[sbb + 1][1 * 32 + 0] = 0x5011;
+    se_mem[sbb + 1][1 * 32 + 1] = 0x5012;
+
+    // put another pipe below it but indexing off the screen base block
+    se_mem[sbb][1024 + 6 * 32 + 0] = 0x6019;
+    se_mem[sbb][1024 + 6 * 32 + 1] = 0x601A;
+    se_mem[sbb][1024 + 7 * 32 + 0] = 0x6011;
+    se_mem[sbb][1024 + 7 * 32 + 1] = 0x6012;
 }
 
 int main() {
@@ -23,8 +45,8 @@ int main() {
     // copy the background tileset into char-base-block (CBB) 0
     memcpy(&tile_mem[0][0], brinTiles, brinTilesLen);
 
-    // manually write to the tilemap in screen-base-block (SBB) 30
-    setTilemap(30);
+    // manually write the tilemap
+    setTilemap();
 
     // set background 0 control and display control registers
     REG_BG0CNT = BG_CBB(0) | BG_4BPP | BG_SBB(30) | BG_REG_64x32;
