@@ -12,25 +12,28 @@ void setTilemap() {
 
     int sbb = 30;
 
-    // the pipe tiles are 25 and 26 (top) and 17 and 18 (bottom)
+    // The pipe tiles are 25 and 26 (top) and 17 and 18 (bottom), or in hex,
+    // 0x19 and 0x1A (top) and 0x11 and 0x12 (bottom). Each screenblock is
+    // 32x32 tiles, so the tile at position (x,y) within the screenblock is set
+    // by writing to the memory at offset (y * 32 + x).
     se_mem[sbb][0] = 0x3019;
     se_mem[sbb][1] = 0x301A;
     se_mem[sbb][1 * 32 + 0] = 0x3011;
     se_mem[sbb][1 * 32 + 1] = 0x3012;
 
-    // using palette 4 instead of 3 changes the color of the pipe
+    // Using palette 4 instead of 3 changes the color of the pipe
     se_mem[sbb][10] = 0x4019;
     se_mem[sbb][11] = 0x401A;
     se_mem[sbb][1 * 32 + 10] = 0x4011;
     se_mem[sbb][1 * 32 + 11] = 0x4012;
 
-    // put a pipe in the other screenblock
+    // Put a pipe in the other screenblock
     se_mem[sbb + 1][0] = 0x5019;
     se_mem[sbb + 1][1] = 0x501A;
     se_mem[sbb + 1][1 * 32 + 0] = 0x5011;
     se_mem[sbb + 1][1 * 32 + 1] = 0x5012;
 
-    // put another pipe below it but indexing off the screen base block
+    // Put another pipe below it but indexing off the screen base block
     se_mem[sbb][1024 + 6 * 32 + 0] = 0x6019;
     se_mem[sbb][1024 + 6 * 32 + 1] = 0x601A;
     se_mem[sbb][1024 + 7 * 32 + 0] = 0x6011;
@@ -39,16 +42,16 @@ void setTilemap() {
 
 int main() {
 
-    // copy the background tile palette into the right place in memory
+    // Copy the background tile palette into the right place in memory
     memcpy(pal_bg_mem, brinPal, brinPalLen);
 
-    // copy the background tileset into char-base-block (CBB) 0
+    // Copy the background tileset into char-base-block (CBB) 0
     memcpy(&tile_mem[0][0], brinTiles, brinTilesLen);
 
-    // manually write the tilemap
+    // Manually write the tilemap
     setTilemap();
 
-    // set background 0 control and display control registers
+    // Set background 0 control and display control registers
     REG_BG0CNT = BG_CBB(0) | BG_4BPP | BG_SBB(30) | BG_REG_64x32;
     REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
 
@@ -72,7 +75,7 @@ int main() {
             posY++;
         }
 
-        // update background offset position based on key press
+        // Update background offset position based on key press
         REG_BG0HOFS = posX;
         REG_BG0VOFS = posY;
 
