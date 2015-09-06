@@ -16,24 +16,28 @@ void setTilemap() {
     // 0x19 and 0x1A (top) and 0x11 and 0x12 (bottom). Each screenblock is
     // 32x32 tiles, so the tile at position (x,y) within the screenblock is set
     // by writing to the memory at offset (y * 32 + x).
-    se_mem[sbb][0] = 0x3019;
-    se_mem[sbb][1] = 0x301A;
-    se_mem[sbb][1 * 32 + 0] = 0x3011;
-    se_mem[sbb][1 * 32 + 1] = 0x3012;
+    se_mem[sbb][0] = 0x0019;
+    se_mem[sbb][1] = 0x001A;
+    se_mem[sbb][1 * 32 + 0] = 0x0011;
+    se_mem[sbb][1 * 32 + 1] = 0x0012;
 
-    // Using palette 4 instead of 3 changes the color of the pipe
-    se_mem[sbb][10] = 0x4019;
-    se_mem[sbb][11] = 0x401A;
-    se_mem[sbb][1 * 32 + 10] = 0x4011;
-    se_mem[sbb][1 * 32 + 11] = 0x4012;
+    // Using palette 3 instead of 0 changes the color of the pipe. For 4bpp
+    // tilesets, the upper nybble of the tilemap value is the palbank number,
+    // which indicates which 16-color palette is used.
+    //
+    // TODO: Figure out why the palbank number is 30 instead of 03 for palette 3.
+    se_mem[sbb][10] = 0x3019;
+    se_mem[sbb][11] = 0x301A;
+    se_mem[sbb][1 * 32 + 10] = 0x3011;
+    se_mem[sbb][1 * 32 + 11] = 0x3012;
 
     // Put a pipe in the other screenblock
-    se_mem[sbb + 1][0] = 0x5019;
-    se_mem[sbb + 1][1] = 0x501A;
-    se_mem[sbb + 1][1 * 32 + 0] = 0x5011;
-    se_mem[sbb + 1][1 * 32 + 1] = 0x5012;
+    se_mem[sbb + 1][0] = 0x4019;
+    se_mem[sbb + 1][1] = 0x401A;
+    se_mem[sbb + 1][1 * 32 + 0] = 0x4011;
+    se_mem[sbb + 1][1 * 32 + 1] = 0x4012;
 
-    // Put another pipe below it but indexing off the screen base block
+    // Put another pipe below it but indexing off of the screen base block
     se_mem[sbb][1024 + 6 * 32 + 0] = 0x6019;
     se_mem[sbb][1024 + 6 * 32 + 1] = 0x601A;
     se_mem[sbb][1024 + 7 * 32 + 0] = 0x6011;
