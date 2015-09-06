@@ -3,12 +3,27 @@
 #include <brin.h>
 #include <metr.h>
 
+/*
+ * Typedefs and structs
+ */
+
 typedef enum {
     SPLASH,
     PLAYING,
     DONE
 } state_type;
 
+/*
+ * Global game state variables
+ */
+
+state_type gameState = SPLASH;
+int posX = 0;
+int posY = 0;
+
+/*
+ * Methods
+ */
 void setTilemap() {
 
     int sbb = 30;
@@ -31,6 +46,34 @@ void drawSplash() {
     tte_write("Press A to begin");
 }
 
+void doPlaying() {
+    if (key_is_down(KEY_RIGHT)) {
+        posX++;
+    }
+    else if (key_is_down(KEY_LEFT)) {
+        posX--;
+    }
+    if (key_is_down(KEY_UP)) {
+        posY--;
+    }
+    else if (key_is_down(KEY_DOWN)) {
+        posY++;
+    }
+    REG_BG0HOFS = posX;
+    REG_BG0VOFS = posY;
+
+    REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
+}
+
+void doSplash() {
+    drawSplash();
+    if (key_released(KEY_A)) {
+        gameState = PLAYING;
+    }
+
+    REG_DISPCNT = DCNT_MODE0 | DCNT_BG1;
+}
+
 int main() {
 
     // Set up background
@@ -45,40 +88,14 @@ int main() {
     // Set up display control register
     REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
 
-    state_type gameState = SPLASH;
-    int posX = 0;
-    int posY = 0;
-
     while(1) {
         key_poll();
 
         if (gameState == PLAYING) {
-            if (key_is_down(KEY_RIGHT)) {
-                posX++;
-            }
-            else if (key_is_down(KEY_LEFT)) {
-                posX--;
-            }
-            if (key_is_down(KEY_UP)) {
-                posY--;
-            }
-            else if (key_is_down(KEY_DOWN)) {
-                posY++;
-            }
-            REG_BG0HOFS = posX;
-            REG_BG0VOFS = posY;
+            doPlaying();
         }
-
-        if (gameState == SPLASH && key_released(KEY_A)) {
-            gameState = PLAYING;
-        }
-
-        if (gameState == SPLASH) {
-            REG_DISPCNT = DCNT_MODE0 | DCNT_BG1;
-            drawSplash();
-        }
-        else if (gameState == PLAYING) {
-            REG_DISPCNT = DCNT_MODE0 | DCNT_BG0;
+        else if (gameState == SPLASH) {
+            doSplash();
         }
 
         vid_vsync();
